@@ -91,6 +91,17 @@ version = 2
 #### Restart containerd:
 `$ sudo systemctl restart containerd`
 
+#### Install NFS Server:
+`$ sudo apt install nfs-kernel-server`
+
+`$ sudo systemctl start nfs-kernel-server.service`
+
+`$ sudo mkdir -p /mnt/data`
+
+`$ echo "/mnt/data *(rw,sync,no_subtree_check,no_root_squash)" | sudo tee -a /etc/exports`
+
+`$ sudo exportfs -a`
+
 The setup is complete.
 
 ---
@@ -124,4 +135,4 @@ $ sudo kubeadm join {master_node_ip}:6443 --token ********** \
 
 #### Verify installation:
 `$ kubectl get nodes`
-The node status should `Ready`
+The node status should be `Ready`

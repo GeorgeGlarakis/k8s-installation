@@ -184,3 +184,31 @@
 - name: Restart containerd
   ansible.builtin.command: systemctl restart containerd
   become: yes
+
+- name: Install NFS Server
+  become: yes
+  block:
+    - name: Install nfs-kernel-server
+      ansible.builtin.apt:
+        name:
+          - nfs-kernel-server
+        state: present 
+    - name: Start nfs-kernel-server
+      ansible.builtin.systemd:
+        name: nfs-kernel-server
+        state: started
+        enabled: yes
+    - name: Create directory /mnt/data
+      ansible.builtin.file:
+        path: /mnt/data
+        state: directory
+        mode: '0755'
+    - name: Edit /etc/exports
+      ansible.builtin.copy:
+        dest: /etc/exports
+        content: |
+          /mnt/data *(rw,sync,no_subtree_check,no_root_squash)
+    - name: Restart containerd
+      ansible.builtin.command: exportfs -a
+
+
